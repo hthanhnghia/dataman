@@ -29,7 +29,7 @@ STATIC_ROOT = os.path.join(PROJECT_DIR, 'static')
 SECRET_KEY = '@02y(ew9ajcr7sukdh##j8amqsp1$cr)*&c*f7)e-&%w_&v0z1'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['databoy.herokuapp.com']
 

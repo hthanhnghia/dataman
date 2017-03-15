@@ -25,4 +25,3 @@ Response: 'value'
 Request: /object
 Body: {'mykey' : 'value'}
 ```
-
