@@ -31,7 +31,7 @@ SECRET_KEY = '@02y(ew9ajcr7sukdh##j8amqsp1$cr)*&c*f7)e-&%w_&v0z1'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['databoy.herokuapp.com']
 
 
 # Application definition
