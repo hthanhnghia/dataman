@@ -50,3 +50,24 @@ class TestKeyValueStorage(unittest.TestCase):
         self.key_value_storage.save('key', 'value')
         with self.assertRaises(InvalidTimestampException):
             self.assertRaises(InvalidTimestampException, self.key_value_storage.get('key', 'abc'))
+
+class APIViewTestCase(TestCase):
+    def setUp(self):
+        redis_client.flushall()
+        self.storage = KeyValueStorage()
+    
+    def test_save_value_for_key_success(self):
+        response = self.client.post('/object', data = {'key': 'value'})
+        self.assertEqual(response.content, 'The data has been added')
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(self.storage.get('key'), 'value')
+    
+    def test_save_value_for_key_with_data_having_more_than_one_key(self):
+        response = self.client.post('/object', data = {'key1': 'value1', 'key2': 'value2'})
+        self.assertEqual(response.content, 'Invalid request')
+        self.assertEqual(response.status_code, 400)
+
+    def test_save_value_for_key_with_invalid_data(self):
+        response = self.client.post('/object', data = {"key"}, content_type='text/xml')
+        self.assertEqual(response.content, 'Invalid request')
+        self.assertEqual(response.status_code, 400)
