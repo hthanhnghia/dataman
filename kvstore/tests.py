@@ -50,7 +50,7 @@ class TestKeyValueStorage(unittest.TestCase):
         self.key_value_storage.save('key', 'value')
         with self.assertRaises(InvalidTimestampException):
             self.assertRaises(InvalidTimestampException, self.key_value_storage.get('key', 'abc'))
-
+        
 class APIViewTestCase(TestCase):
     def setUp(self):
         redis_client.flushall()
@@ -71,3 +71,28 @@ class APIViewTestCase(TestCase):
         response = self.client.post('/object', data = {"key"}, content_type='text/xml')
         self.assertEqual(response.content, 'Invalid request')
         self.assertEqual(response.status_code, 400)
+
+    def test_get_value_by_key(self):
+        self.storage.save('key', 'value')
+        response = self.client.get('/object/key')
+        self.assertEqual(response.content, 'value')
+        self.assertEqual(response.status_code, 200) 
+
+    @patch('time.time', mock_time)
+    def test_get_value_by_key_and_timestamp(self):
+        mock_time.return_value = 1.5
+        self.storage.save('key', 'value')
+
+        response = self.client.get('/object/key?timestamp=2')
+        self.assertEqual(response.content, 'value')
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_value_by_key_with_invalid_timestamp(self):
+        response = self.client.get('/object/key?timestamp=abc')
+        self.assertEqual(response.content, 'Invalid timestamp format - Timestamp must be a float')
+        self.assertEqual(response.status_code, 400)     
+
+    def test_get_value_by_key_with_non_existent_key(self):
+        response = self.client.get('/object/key')
+        self.assertEqual(response.content, '')
+        self.assertEqual(response.status_code, 204)

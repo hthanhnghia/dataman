@@ -17,3 +17,18 @@ def save_value_for_key(request):
         return HttpResponse('The data has been added', status=201)
     else:
         return HttpResponse('Invalid request', status=400)
+
+@require_http_methods(["GET"])
+def get_value_by_key(request, key):
+    timestamp = request.GET.get('timestamp', None)
+
+    try:
+        value = storage.get(key, timestamp)
+        return HttpResponse(value, status=200)
+
+    except InvalidTimestampException:
+        return HttpResponse('Invalid timestamp format - Timestamp must be a float', status=400)
+
+    except NotFoundException:
+        return HttpResponse(status=204)
+    
